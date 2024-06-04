@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "CrossARM",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "STM32L073xx",
+                "DEBUG"
+            ],
+            "compilerPath": "/home/jean/opt/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-g++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}
