@@ -3,12 +3,13 @@
 int main(void)
 {
     uint8_t test = 3;
-    uint8_t res = 2 + test;
+    
 
     while(1)
     {
 
     }
+    return 0;
 }
 
 

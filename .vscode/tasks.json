@@ -6,30 +6,22 @@
         {
             "type": "shell",
             "label": "Build Project",
-            "command": "cmake --build .",
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
+            "command": "make",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": {
-                "base": "$gcc", 
-                "fileLocation": ["relative", "${workspaceFolder}/build"]
+                "base": "$gcc"
             }
         },
         {
             "type": "shell",
-            "label": "clean & build",
-            "command": "cmake --build . --clean-first",
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
+            "label": "clean",
+            "command": "make clean",
             "group": "build",
             "problemMatcher": {
-                "base": "$gcc", 
-                "fileLocation": ["relative", "${workspaceFolder}/build"]
+                "base": "$gcc"
             }
 }
     ]
