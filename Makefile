@@ -33,33 +33,35 @@ BIN_DIR = $(BUILD_DIR)/bin
 TARGET = DevBoard
 
 
-C_SOURCES =  \
-	src/main.cpp \
-	src/system_stm32l0xx.c
+INCDIRS =  \
+	.  \
+	./drivers/cmsis \
+	./drivers/st \
+	./inc
 
-ASM_SOURCES =  \
-	src/startup_stm32l073xx.s
-
-#OBJECT_NAMES = $(C_SOURCES:.cpp=.o) $(C_SOURCES:.c=.o) $(ASM_SOURCES:.s=.o)
-
-#OBJECTS = $(patsubst %, $(OBJ_DIR)/%, $(OBJECT_NAMES))
-
-OBJECTS =  \
-	$(OBJ_DIR)/main.o \
-	$(OBJ_DIR)/startup_stm32l073xx.o \
-	$(OBJ_DIR)/system_stm32l0xx.o \
+SOURCEDIRS =  \
+	.  \
+	./src
 
 
-C_INCLUDES =  \
--Idrivers/cmsis \
--Idrivers/st
+CFILES = $(foreach D, $(SOURCEDIRS),$(wildcard $(D)/*.c))
+CXXFILES = $(foreach D, $(SOURCEDIRS),$(wildcard $(D)/*.cpp))
+
+ASM_SOURCES = $(foreach D, $(SOURCEDIRS),$(wildcard $(D)/*.s))
+
+OBJECTS_TEMP = $(patsubst %.c, %.o, $(CFILES)) $(patsubst %.cpp, %.o, $(CXXFILES)) $(patsubst %.s, %.o, $(ASM_SOURCES))
+
+OBJECTS = $(subst src,$(OBJ_DIR), $(OBJECTS_TEMP))
+
 
 C_DEFS =  \
 	-DSTM32L073xx
 
-MOREFLAGS = -Wall -Wextra -Wpedantic -O0 -g3 -fdata-sections -ffunction-sections
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -std=c17 $(MOREFLAGS) 
-CXXFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -std=c++17 -fno-rtti -fno-exceptions -fno-threadsafe-statics $(MOREFLAGS) 
+
+DEPFLAGS=-MP -MD
+OPTIONS = -Wall -Wextra -Wpedantic -O0 -g3 -fdata-sections -ffunction-sections
+CFLAGS = $(MCU) $(C_DEFS) $(foreach D, $(INCDIRS), -I$(D)) $(OPTIONS) $(DEPFLAGS)
+CXXFLAGS = $(CFLAGS) -std=c++17 -fno-rtti -fno-exceptions -fno-threadsafe-statics 
 
 #######################################
 # LDFLAGS
@@ -101,7 +103,7 @@ $(OBJ_DIR)/%.o: src/%.cpp
 
 $(OBJ_DIR)/%.o: src/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c -o $@ $^	
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
 
 ## Compiling ASM
 

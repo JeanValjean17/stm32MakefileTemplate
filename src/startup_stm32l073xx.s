@@ -287,8 +287,3 @@ g_pfnVectors:
 
    .weak      USB_IRQHandler
    .thumb_set USB_IRQHandler,Default_Handler
-
-
-
-
-
