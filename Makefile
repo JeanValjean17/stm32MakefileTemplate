@@ -4,6 +4,8 @@
 PREFIX = arm-none-eabi-
 GCC_PATH = /home/jean/opt/gcc-arm-none-eabi-10.3-2021.10/bin
 
+JLINK_FLASH = /home/jean/opt/SEGGER/JLink_Linux_V796g_x86_64
+
 ifdef GCC_PATH
 CC = $(GCC_PATH)/$(PREFIX)gcc
 CXX = $(GCC_PATH)/$(PREFIX)g++
@@ -40,8 +42,8 @@ INCDIRS =  \
 	./inc
 
 SOURCEDIRS =  \
-	.  \
-	./src
+	./src \
+	./drivers/st
 
 
 CFILES = $(foreach D, $(SOURCEDIRS),$(wildcard $(D)/*.c))
@@ -51,11 +53,17 @@ ASM_SOURCES = $(foreach D, $(SOURCEDIRS),$(wildcard $(D)/*.s))
 
 OBJECTS_TEMP = $(patsubst %.c, %.o, $(CFILES)) $(patsubst %.cpp, %.o, $(CXXFILES)) $(patsubst %.s, %.o, $(ASM_SOURCES))
 
-OBJECTS = $(subst src,$(OBJ_DIR), $(OBJECTS_TEMP))
 
+## TODO: Need to improve this :)
+#$(info objects_temp $(OBJECTS_TEMP))
+
+OBJECTS = $(addprefix $(OBJ_DIR)/, $(notdir $(OBJECTS_TEMP)))   
+
+#$(error objects $(OBJECTS))
 
 C_DEFS =  \
-	-DSTM32L073xx
+	-DSTM32L073xx \
+	-DUSE_HAL_DRIVER
 
 
 DEPFLAGS=-MP -MD
@@ -113,7 +121,17 @@ $(OBJ_DIR)/%.o: src/%.s
 
 
 
+#DEVICE = STM32L073RZ
 
+#$(BUILD_DIR)/jflash: $(BIN_DIR)/$(TARGET).bin
+#	@touch $@
+#	@echo device $(DEVICE) > $@
+	
+#	@echo loadbin $< 0x8000000 >> $@
+	
+
+#jflash: $(BUILD_DIR)/jflash
+#	$(JLINK_FLASH)/JLinkExe -commanderscript $<
 
 
 
