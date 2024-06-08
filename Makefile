@@ -63,7 +63,8 @@ OBJECTS = $(addprefix $(OBJ_DIR)/, $(notdir $(OBJECTS_TEMP)))
 
 C_DEFS =  \
 	-DSTM32L073xx \
-	-DUSE_HAL_DRIVER
+	-DUSE_FULL_LL_DRIVER \
+	-DDEBUG
 
 
 DEPFLAGS=-MP -MD
@@ -86,11 +87,31 @@ LDFLAGS = $(MCU) -specs=nano.specs -T $(LDSCRIPT) $(LIBS) -Wl,-Map=$(BUILD_DIR)/
 
 ##All C files
 
+
+## Compiling C++
+
+$(OBJ_DIR)/%.o: src/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c -o $@ $^
+
+
+## Compiling C
+
+$(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
+
+$(OBJ_DIR)/%.o: drivers/st/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
+
+## Compiling ASM
+
+$(OBJ_DIR)/%.o: src/%.s | $(OBJ_DIR)
+	$(AS) $(CXXFLAGS) -c -o $@ $^	
+
+
 all: $(BIN_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).hex $(BIN_DIR)/$(TARGET).bin
 
 ## Linking
-$(BIN_DIR)/$(TARGET).elf: $(OBJECTS)
-	@mkdir -p $(BIN_DIR)
+$(BIN_DIR)/$(TARGET).elf: $(OBJECTS) 
 	$(CXX) $(LDFLAGS) $^ -o $@
 	$(SZ) $@
 
@@ -100,26 +121,12 @@ $(BIN_DIR)/$(TARGET).hex: $(BIN_DIR)/$(TARGET).elf
 $(BIN_DIR)/$(TARGET).bin: $(BIN_DIR)/$(TARGET).elf 
 	$(BIN) $< $@
 
-## Compiling C++
 
-$(OBJ_DIR)/%.o: src/%.cpp
-	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c -o $@ $^
+$(BIN_DIR):
+	mkdir -p $@
 
-
-## Compiling C
-
-$(OBJ_DIR)/%.o: src/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
-
-## Compiling ASM
-
-$(OBJ_DIR)/%.o: src/%.s
-	@mkdir -p $(OBJ_DIR)
-	$(AS) $(CXXFLAGS) -c -o $@ $^	
-
-
+$(OBJ_DIR): $(BIN_DIR)
+	mkdir -p $@
 
 #DEVICE = STM32L073RZ
 
