@@ -25,7 +25,7 @@ BIN = $(CP) -O binary -S
 
 CPU = -mcpu=cortex-m0plus
 
-MCU = $(CPU) -mthumb
+MCU = $(CPU) -mthumb -mfloat-abi=soft
 
 
 BUILD_DIR = build
@@ -67,7 +67,7 @@ C_DEFS =  \
 
 
 DEPFLAGS=-MP -MD
-OPTIONS = -Wall -Wextra -Wpedantic -O0 -g3 -fdata-sections -ffunction-sections
+OPTIONS = -Wall -Wextra -Wpedantic -O0 -g3 -fdata-sections -ffunction-sections 
 CFLAGS = $(MCU) $(C_DEFS) $(foreach D, $(INCDIRS), -I$(D)) $(OPTIONS) $(DEPFLAGS)
 CXXFLAGS = $(CFLAGS) -std=c++17 -fno-rtti -fno-exceptions -fno-threadsafe-statics 
 
