@@ -1,10 +1,6 @@
 #include "main.h"
 
-void ActivateClocks(void)
-{
-    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
-}
+
 
 int main(void)
 {
@@ -12,13 +8,14 @@ int main(void)
     ActivateClocks();
     SystemClock_Config();
     MX_GPIO_Init();
+    SysTickSetup();
 
     while (1)
     {
-        LL_GPIO_SetOutputPin(LD2_GPIO_Port, LL_GPIO_PIN_5);
+        /*LL_GPIO_SetOutputPin(LD2_GPIO_Port, LL_GPIO_PIN_5);
         LL_mDelay(1000);
         LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LL_GPIO_PIN_5);
-        LL_mDelay(1000);
+        LL_mDelay(1000);*/
     }
     return 0;
 }
@@ -71,8 +68,6 @@ void MX_GPIO_Init(void)
 {
     // LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
     LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
-    /* USER CODE BEGIN MX_GPIO_Init_1 */
-    /* USER CODE END MX_GPIO_Init_1 */
 
     /* GPIO Ports Clock Enable */
     LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOC);
@@ -102,8 +97,22 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
     LL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
-    /* USER CODE BEGIN MX_GPIO_Init_2 */
-    /* USER CODE END MX_GPIO_Init_2 */
+}
+
+
+void ActivateClocks(void)
+{
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+}
+
+void SysTickSetup(void)
+{
+    NVIC_SetPriority(SysTick_IRQn, 35);
+
+    LL_Init1msTick(32000000);
+    LL_SYSTICK_EnableIT();
+    NVIC_EnableIRQ(SysTick_IRQn);
 }
 
 /**

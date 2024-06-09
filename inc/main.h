@@ -21,6 +21,8 @@ extern "C" {
 #define LD2_GPIO_Port GPIOA
 
 void SystemClock_Config(void);
+void SysTickSetup(void);
+void ActivateClocks(void);
 void Error_Handler(void);
 void MX_GPIO_Init(void);
 
