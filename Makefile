@@ -39,11 +39,11 @@ INCDIRS =  \
 	.  \
 	./drivers/cmsis \
 	./drivers/st \
-	./inc
+	./inc \
 
 SOURCEDIRS =  \
 	./src \
-	./drivers/st
+	./drivers/st 
 
 
 CFILES = $(foreach D, $(SOURCEDIRS),$(wildcard $(D)/*.c))
@@ -94,12 +94,13 @@ $(OBJ_DIR)/%.o: src/%.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c -o $@ $^
 
 
+
 ## Compiling C
 
 $(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
 
-$(OBJ_DIR)/%.o: drivers/st/%.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: drivers/st/%.c | $(OBJ_DIR)/main.o
 	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
 
 ## Compiling ASM

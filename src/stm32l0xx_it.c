@@ -18,10 +18,17 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+
 #include "stm32l0xx_it.h"
 
+
+
 volatile uint32_t tickCounter = 0;
+
+
+
+
+
 
 /******************************************************************************/
 /*           Cortex-M0+ Processor Interruption and Exception Handlers          */
@@ -89,7 +96,7 @@ void SysTick_Handler(void)
 {
   if (tickCounter >= 500)
   {
-    LL_GPIO_TogglePin(LD2_GPIO_Port, LL_GPIO_PIN_5);
+    LL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
     tickCounter = 0;
   }
 

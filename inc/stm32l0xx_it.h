@@ -25,27 +25,14 @@
  extern "C" {
 #endif
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
-/* USER CODE END Includes */
+#include "stm32l0xx.h"
+#include "stm32l0xx_ll_gpio.h"
 
-/* Exported types ------------------------------------------------------------*/
-/* USER CODE BEGIN ET */
+#define LD2_Pin LL_GPIO_PIN_5
+#define LD2_GPIO_Port GPIOA
 
-/* USER CODE END ET */
 
-/* Exported constants --------------------------------------------------------*/
-/* USER CODE BEGIN EC */
-
-/* USER CODE END EC */
-
-/* Exported macro ------------------------------------------------------------*/
-/* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
-
-/* Exported functions prototypes ---------------------------------------------*/
 void NMI_Handler(void);
 void HardFault_Handler(void);
 void SVC_Handler(void);

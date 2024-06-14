@@ -14,11 +14,17 @@ extern "C" {
 #include "stm32l0xx_ll_utils.h"
 #include "stm32l0xx_ll_pwr.h"
 #include "stm32l0xx_ll_dma.h"
-#include "stm32l0xx_ll_usart.h"
+
 #include "stm32l0xx_ll_gpio.h"
+#include "usart.h"
 
 #define LD2_Pin LL_GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define USART_TX_Pin LL_GPIO_PIN_2
+#define USART_TX_GPIO_Port GPIOA
+#define USART_RX_Pin LL_GPIO_PIN_3
+#define USART_RX_GPIO_Port GPIOA
+
 
 void SystemClock_Config(void);
 void SysTickSetup(void);
