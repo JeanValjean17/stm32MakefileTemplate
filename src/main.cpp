@@ -1,4 +1,6 @@
 #include "main.h"
+#include "usart.h"
+
 
 UART_HandleTypeDef huart1;
 
@@ -8,8 +10,9 @@ int main(void)
     HAL_Init();    
     SystemClock_Config();
     MX_GPIO_Init();
-    MX_USART2_UART_Init();
-    uint8_t msg[13] = "Hello World\n";
+    Drivers::Usart usart(&huart1);
+
+    uint8_t msg[] = "Hello World\n\r";
 
     while (1)
     {
@@ -17,7 +20,8 @@ int main(void)
         HAL_Delay(500);
         HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
         HAL_Delay(500);
-        HAL_UART_Transmit(&huart1, msg, 13, 20000);
+        usart.TransmiBlocking(msg);
+        
     }
     return 0;
 }
@@ -66,34 +70,6 @@ void SystemClock_Config(void)
     }
 }
 
-void MX_USART2_UART_Init(void)
-{
-
-    /* USER CODE BEGIN USART2_Init 0 */
-
-    /* USER CODE END USART2_Init 0 */
-
-    /* USER CODE BEGIN USART2_Init 1 */
-
-    /* USER CODE END USART2_Init 1 */
-    huart1.Instance = USART1;
-    huart1.Init.BaudRate = 115200;
-    huart1.Init.WordLength = UART_WORDLENGTH_8B;
-    huart1.Init.StopBits = UART_STOPBITS_1;
-    huart1.Init.Parity = UART_PARITY_NONE;
-    huart1.Init.Mode = UART_MODE_TX;
-    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-    huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-
-    if (HAL_UART_Init(&huart1) != HAL_OK)
-    {
-        Error_Handler();
-    }
-    /* USER CODE BEGIN USART2_Init 2 */
-
-    /* USER CODE END USART2_Init 2 */
-}
 
 /**
  * @brief GPIO Initialization Function
@@ -121,16 +97,7 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : USART_TX_Pin USART_RX_Pin */
-    GPIO_InitStruct.Pin = USART_TX_Pin | USART_RX_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF4_USART2;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /* USER CODE BEGIN MX_GPIO_Init_2 */
-    /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /**
