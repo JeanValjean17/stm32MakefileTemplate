@@ -1,79 +1,23 @@
 #include "main.h"
 
-void SetupClock(void)
-{
+UART_HandleTypeDef huart1;
 
-    // We want to use External oscillator and PLL
-    // RCC->CIER |= RCC_CIER_HSERDYIE | RCC_CIER_PLLRDYIE;
-
-    RCC->CR |= RCC_CR_HSEON;
-
-    while ((RCC->CR & RCC_CR_HSERDY) == 0)
-        ;
-
-    // RCC->AHBENR |= RCC_AHBENR_MIFEN;
-
-    RCC->APB1ENR |= RCC_APB1ENR_PWREN;
-
-    PWR->CR |= PWR_CR_VOS_0;
-
-    FLASH->ACR |= FLASH_ACR_LATENCY | FLASH_ACR_PRE_READ;
-
-    RCC->CFGR |= RCC_CFGR_PLLDIV2 | RCC_CFGR_PLLMUL8 | RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PPRE2_0 | RCC_CFGR_PPRE1_0 | RCC_CFGR_HPRE_0;
-
-    RCC->CR |= RCC_CR_PLLON;
-
-    while ((RCC->CR & RCC_CR_PLLRDY) == 0)
-        ;
-
-    RCC->CFGR |= RCC_CFGR_SW_PLL;
-
-    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL)
-        ;
-}
-
-void SetupIOPins(void)
-{
-    RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
-
-    // GPIOA->MODER &= ~(3UL<<10);
-    GPIOA->MODER |= (1UL << 10);
-    GPIOA->OTYPER = ~(1UL << 5);
-    GPIOA->OSPEEDR |= (0UL << 10);
-    GPIOA->PUPDR |= ~((1UL << 10) | (1UL << 11));
-    GPIOA->ODR |= (1UL << 5);
-}
-
-void HAL_MspInit(void)
-{
-
-    /* USER CODE BEGIN MspInit 0 */
-
-    /* USER CODE END MspInit 0 */
-
-    __HAL_RCC_SYSCFG_CLK_ENABLE();
-    __HAL_RCC_PWR_CLK_ENABLE();
-
-    /* System interrupt init*/
-
-    /* USER CODE BEGIN MspInit 1 */
-
-    /* USER CODE END MspInit 1 */
-}
 
 int main(void)
 {
-    HAL_Init();
-    HAL_MspInit();
+    HAL_Init();    
     SystemClock_Config();
     MX_GPIO_Init();
+    MX_USART2_UART_Init();
+    uint8_t msg[13] = "Hello World\n";
 
     while (1)
     {
         HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-        HAL_Delay(1000);
+        HAL_Delay(500);
         HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-        HAL_Delay(1000);
+        HAL_Delay(500);
+        HAL_UART_Transmit(&huart1, msg, 13, 20000);
     }
     return 0;
 }
@@ -114,12 +58,41 @@ void SystemClock_Config(void)
     {
         Error_Handler();
     }
-    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
-    PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
     {
         Error_Handler();
     }
+}
+
+void MX_USART2_UART_Init(void)
+{
+
+    /* USER CODE BEGIN USART2_Init 0 */
+
+    /* USER CODE END USART2_Init 0 */
+
+    /* USER CODE BEGIN USART2_Init 1 */
+
+    /* USER CODE END USART2_Init 1 */
+    huart1.Instance = USART1;
+    huart1.Init.BaudRate = 115200;
+    huart1.Init.WordLength = UART_WORDLENGTH_8B;
+    huart1.Init.StopBits = UART_STOPBITS_1;
+    huart1.Init.Parity = UART_PARITY_NONE;
+    huart1.Init.Mode = UART_MODE_TX;
+    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+    huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+
+    if (HAL_UART_Init(&huart1) != HAL_OK)
+    {
+        Error_Handler();
+    }
+    /* USER CODE BEGIN USART2_Init 2 */
+
+    /* USER CODE END USART2_Init 2 */
 }
 
 /**
@@ -147,6 +120,14 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : USART_TX_Pin USART_RX_Pin */
+    GPIO_InitStruct.Pin = USART_TX_Pin | USART_RX_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF4_USART2;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* USER CODE BEGIN MX_GPIO_Init_2 */
     /* USER CODE END MX_GPIO_Init_2 */
