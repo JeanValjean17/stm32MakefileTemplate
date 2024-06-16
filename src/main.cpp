@@ -1,17 +1,16 @@
 #include "main.h"
 #include "usart.h"
-
+#include "app_display.h"
 
 UART_HandleTypeDef huart1;
 
-
 int main(void)
 {
-    HAL_Init();    
+    HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
     Drivers::Usart usart(&huart1);
-
+    MX_DISPLAY_Init();
     uint8_t msg[] = "Hello World\n\r";
 
     while (1)
@@ -21,7 +20,6 @@ int main(void)
         HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
         HAL_Delay(500);
         usart.TransmiBlocking(msg);
-        
     }
     return 0;
 }
@@ -70,7 +68,6 @@ void SystemClock_Config(void)
     }
 }
 
-
 /**
  * @brief GPIO Initialization Function
  * @param None
@@ -86,9 +83,15 @@ void MX_GPIO_Init(void)
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOH_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
 
-    /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+    HAL_GPIO_WritePin(LCD_CS_GPIO_Port, LCD_CS_Pin, GPIO_PIN_RESET);
+
+    HAL_GPIO_WritePin(MEM_CS_GPIO_Port, MEM_CS_Pin, GPIO_PIN_SET);
+
+    HAL_GPIO_WritePin(GPIOB, LCD_RESET_Pin | LCD_DCX_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin : LD2_Pin */
     GPIO_InitStruct.Pin = LD2_Pin;
@@ -97,7 +100,19 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
+    /*Configure GPIO pin : LCD_CS_Pin */
+    GPIO_InitStruct.Pin = LCD_CS_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(LCD_CS_GPIO_Port, &GPIO_InitStruct);
 
+    /*Configure GPIO pins : MEM_CS_Pin LCD_RESET_Pin LCD_DCX_Pin */
+    GPIO_InitStruct.Pin = MEM_CS_Pin | LCD_RESET_Pin | LCD_DCX_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
 /**

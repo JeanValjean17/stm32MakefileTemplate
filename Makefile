@@ -39,11 +39,19 @@ INCDIRS =  \
 	.  \
 	./drivers/cmsis \
 	./drivers/st \
+	./drivers/st/BSP/Components/Common \
+	./drivers/st/BSP/Components/ili9341 \
+	./drivers/st/BSP/Components/mx25l6433f \
 	./inc \
 
 SOURCEDIRS =  \
 	./src \
-	./drivers/st 
+	./src/DISPLAY/App \
+	./src/DISPLAY/Target \
+	./drivers/st \
+	./drivers/st/BSP/Components/Common \
+	./drivers/st/BSP/Components/ili9341 \
+	./drivers/st/BSP/Components/mx25l6433f \
 
 
 CFILES = $(foreach D, $(SOURCEDIRS),$(wildcard $(D)/*.c))
@@ -98,10 +106,27 @@ $(OBJ_DIR)/%.o: src/%.cpp | $(OBJ_DIR)
 ## Compiling C
 
 $(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^
+
+$(OBJ_DIR)/%.o: src/DISPLAY/App/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^
+
+$(OBJ_DIR)/%.o: src/DISPLAY/Target/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^		
 
 $(OBJ_DIR)/%.o: drivers/st/%.c | $(OBJ_DIR)/main.o
-	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^	
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^
+
+$(OBJ_DIR)/%.o: drivers/st/BSP/Components/Common/%.c | $(OBJ_DIR)/main.o
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^
+
+$(OBJ_DIR)/%.o: drivers/st/BSP/Components/ili9341/%.c | $(OBJ_DIR)/main.o
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^
+
+$(OBJ_DIR)/%.o: drivers/st/BSP/Components/mx25l6433f/%.c | $(OBJ_DIR)/main.o
+	$(CC) $(CFLAGS) -std=c17 -c -o $@ $^
+
+	
 
 ## Compiling ASM
 
