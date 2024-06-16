@@ -5,6 +5,7 @@
 
 namespace Drivers
 {
+
     class Usart
     {
     public:
@@ -14,7 +15,7 @@ namespace Drivers
 
     private:
         UART_HandleTypeDef *UsartRef;
-        void SendCharacter(uint8_t character);
+        void InitGpioUartPort(void);
     };
 }
 
