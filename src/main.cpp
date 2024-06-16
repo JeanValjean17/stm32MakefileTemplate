@@ -2,6 +2,7 @@
 #include "usart.h"
 #include "app_display.h"
 
+
 UART_HandleTypeDef huart1;
 
 int main(void)
@@ -11,7 +12,7 @@ int main(void)
     MX_GPIO_Init();
     Drivers::Usart usart(&huart1);
     MX_DISPLAY_Init();
-    uint8_t msg[] = "Hello World\n\r";
+   
 
     while (1)
     {
@@ -19,7 +20,7 @@ int main(void)
         HAL_Delay(500);
         HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
         HAL_Delay(500);
-        usart.TransmiBlocking(msg);
+        usart.PrintBlocking("Value of One in number is  : %d %f \r\n", 1);
     }
     return 0;
 }
@@ -114,6 +115,8 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
+
+
 
 /**
  * @brief  This function is executed in case of error occurrence.

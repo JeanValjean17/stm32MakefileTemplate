@@ -1,6 +1,6 @@
 #include "usart.h"
 #include <cstring>
-
+#include <stdarg.h>
 namespace Drivers
 {
     Usart::Usart(UART_HandleTypeDef *huart)
@@ -16,16 +16,16 @@ namespace Drivers
         UsartRef->Init.HwFlowCtl = UART_HWCONTROL_NONE;
         UsartRef->Init.OverSampling = UART_OVERSAMPLING_16;
         UsartRef->Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-        
+
         this->InitGpioUartPort();
-        
+
         if (HAL_UART_Init(UsartRef) != HAL_OK)
         {
         }
     }
 
     void Usart::InitGpioUartPort()
-    {   
+    {
         GPIO_InitTypeDef GPIO_InitStruct = {0};
 
         if (this->UsartRef->Instance == USART1)
@@ -78,9 +78,21 @@ namespace Drivers
         }
     }
 
-    void Usart::TransmiBlocking(uint8_t *characterBufferToSend)
+    void Usart::PrintBlocking(const char *characterBufferToSend, ...)
     {
-        HAL_UART_Transmit(UsartRef, (uint8_t *)characterBufferToSend, strlen((const char *)characterBufferToSend), HAL_MAX_DELAY);
+        va_list args;
+        va_start(args, characterBufferToSend);
+        this->VPrint(characterBufferToSend, args);
+        va_end(args);
+    }
+
+    void Usart::VPrint(const char *string, va_list args)
+    {
+        uint8_t string2Send[DEBUG_BUFFER_SIZE];
+
+        vsprintf((char *)string2Send, (const char *)string, args);
+
+        HAL_UART_Transmit(UsartRef, string2Send, strlen((const char *)string2Send), HAL_MAX_DELAY);
     }
 
     Usart::~Usart()

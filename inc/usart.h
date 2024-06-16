@@ -2,6 +2,9 @@
 #define __USART_H
 
 #include "stm32l0xx_hal.h"
+#include <stdio.h>
+
+#define DEBUG_BUFFER_SIZE 200
 
 namespace Drivers
 {
@@ -11,10 +14,11 @@ namespace Drivers
     public:
         Usart(UART_HandleTypeDef *huart);
         ~Usart();
-        void TransmiBlocking(uint8_t *characterBufferToSend);
+        void PrintBlocking(const char *characterBufferToSend, ...);
 
     private:
-        UART_HandleTypeDef *UsartRef;
+        UART_HandleTypeDef *UsartRef;     
+        void VPrint(const char * string, __va_list args);   
         void InitGpioUartPort(void);
     };
 }
