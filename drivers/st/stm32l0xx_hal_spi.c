@@ -345,7 +345,7 @@ HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef *hspi)
     else
     {
       /* Baudrate prescaler not use in Motoraola Slave mode. force to default value */
-      hspi->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+      hspi->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
     }
   }
   else
@@ -3981,4 +3981,3 @@ static void SPI_AbortTx_ISR(SPI_HandleTypeDef *hspi)
 /**
   * @}
   */
-

@@ -11,7 +11,7 @@ int main(void)
     SystemClock_Config();
     MX_GPIO_Init();
     Drivers::Usart usart(&huart1);
-    MX_DISPLAY_Init();
+//    MX_DISPLAY_Init();
    
 
     while (1)
